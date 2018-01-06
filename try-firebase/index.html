@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase</title>
+</head>
+<body>
+  <input id="register" type="button" value="register" onclick="register();" />
+  <br />
+  <br />
+  <input id="signin" type="button" value="signin" onclick="signin();" />
+  <br />
+  <br />
+  <input id="signout" type="button" value="signout" onclick="signout();" />
+  <br />
+  <br />
+  <input id="write" type="button" value="write user" onclick="writeUserData('userId_1', 'Michael', 'tngmichael89@gmail.com');" />
+
+  <!-- all sdk -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script> -->
+
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js"></script>
+
+  <!-- no use -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-firestore.js"></script> -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js"></script> -->
+  <!-- Leave out Storage -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase-storage.js"></script> -->
+
+  <script>
+    // Initialize Firebase
+    var config = { // <<< FILL THIS
+      apiKey: "",
+      authDomain: "",
+      databaseURL: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: ""
+    };
+    firebase.initializeApp(config);
+    // or
+    // var app = firebase.initializeApp(config);
+
+    // >>> firebase.auth()
+
+    // Before you begin
+    // Add Firebase to your JavaScript project.
+    // If you haven't yet connected your app to your Firebase project, do so from the Firebase console.
+    // Enable Email/Password sign-in:
+    // In the Firebase console, open the Auth section.
+    // On the Sign in method tab, enable the Email/password sign-in method and click Save.
+
+    var email = 'tngmichael89@gmail.com';
+    var password = '123456';
+    // auth/weak-password Password should be at least 6 characters
+
+    function register() {
+      // Create a password-based account
+      // To create a new user account with a password, complete the following steps in your app's sign-up page:
+
+      // When a new user signs up using your app's sign-up form, complete any new account validation steps that your app requires, such as verifying that the new account's password was correctly typed and meets your complexity requirements.
+      // Create a new account by passing the new user's email address and password to createUserWithEmailAndPassword:
+      // If the new account was created, the user is signed in automatically
+
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+    }  
+
+    function signin() {
+      // Sign in a user with an email address and password
+      // The steps for signing in a user with a password are similar to the steps for creating a new account. In your app's sign-in page, do the following:
+
+      // When a user signs in to your app, pass the user's email address and password to signInWithEmailAndPassword:
+
+      firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+    }
+
+    // Next steps
+    // After a user signs in for the first time, a new user account is created and linked to the credentials—that is, the user name and password, phone number, or auth provider information—the user signed in with. This new account is stored as part of your Firebase project, and can be used to identify a user across every app in your project, regardless of how the user signs in.
+
+    // In your apps, the recommended way to know the auth status of your user is to set an observer on the Auth object. You can then get the user's basic profile information from the User object. See Manage Users.
+
+    // In your Firebase Realtime Database and Cloud Storage Security Rules, you can get the signed-in user's unique user ID from the auth variable, and use it to control what data a user can access.
+
+    // You can allow users to sign in to your app using multiple authentication providers by linking auth provider credentials to an existing user account.
+
+    function signout() {
+      // To sign out a user, call signOut:
+
+      firebase.auth().signOut().then(function() {
+        // Sign-out successful.
+        console.log('Sign-out successful');
+      }).catch(function(error) {
+        // An error happened.
+        console.log(error.message);
+      });
+    }
+
+
+
+    // >>> firebase.database()
+
+    var database = firebase.database();
+
+    function writeUserData(userId, name, email) {
+      firebase.database().ref('users/' + userId).set({
+        username: name,
+        email: email,
+      });
+    }
+
+  </script>
+</body>
+</html>
