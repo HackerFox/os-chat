@@ -6,8 +6,20 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+
 export default {
-  name: 'app'
+  name: 'app',
+  mounted: function () {
+    // Initialize Firebase
+    const config = {
+      apiKey: "...",
+      authDomain: "...",
+      databaseURL: "...",
+      projectId: "...",
+    };
+    firebase.initializeApp(config);
+  }  
 }
 </script>
 

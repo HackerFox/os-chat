@@ -17,16 +17,92 @@
       <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
+
+    <div style="background: yellow;">
+      os-chat
+      <button @click="signin">
+        Sign In
+      </button>
+      <button @click="getChats">
+        Get Chats
+      </button>
+      <button @click="writeSample">
+        Write Sample
+      </button>
+      <ol>
+        <li v-for="chat in chats">
+          {{ chat }}
+        </li>
+      </ol>
+    </div>
   </div>
 </template>
 
 <script>
+import firebase from 'firebase'
+
+export const snapshotToArray = snapshot => {
+  let returnArr = [];
+  snapshot.forEach(childSnapshot => {
+    let item = childSnapshot.val(); 
+    item.key = childSnapshot.key;
+    returnArr.push(item);
+  });
+  return returnArr;
+};
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      chats: []
     }
+  },
+  methods: {
+    now: function () {
+      return Date.now()
+    },
+    signin: function () {
+      const email = 'tngmichael89@gmail.com'
+      const password = '123456'
+      firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+      });
+      this.getChats()
+    },
+    getChats: function () {
+      const chatsRef = firebase.database().ref('chats'); // << perlu di refactor
+      chatsRef.on('value', snapshot => {
+        const data = snapshotToArray(snapshot);
+        this.chats = data;
+      });
+    },
+    writeSample: function () {
+      const chatsRef = firebase.database().ref('chats'); // << perlu di refactor
+      const newChatsRef = chatsRef.push({
+        person: 'Anonymous',
+        lastMessage: 'pesan terakhir Good Luck!!',
+        status: 'UNRESOLVED',
+        timestamp: Date.now()
+      });
+      const chatId = newChatsRef.key;
+      const messagesRef = firebase.database().ref('messages'); // << perlu di refactor
+      messagesRef.child(chatId).push({
+        from: 'Anonymous',
+        message: 'pesan terakhir Good Luck!!',
+        timestamp: Date.now()
+      });
+      messagesRef.child(chatId).on('child_added', snapshot => {
+        console.log(snapshot);
+      });
+    }
+  },
+  mounted: function () {
+    // this.getChats() << error karena belum di init, initnya di mounted app
   }
 }
 </script>
